@@ -5,7 +5,7 @@ import tkinter as tk
 import tkinter.ttk as ttk
 import tkinter.font as tkfont
 
-VERSION = 'v1.0.0'
+VERSION = 'v1.0.1'
 
 class Session:
     def __init__(self, project: str, startTime: datetime, stopTime: datetime):
@@ -79,6 +79,8 @@ class TimerApp:
         #schedule the update function
         self.root.after(16, self.update)
     def runApp(self):
+        #set window size
+        self.root.geometry("360x400")
         #set title, icon
         self.root.title("TimeTracker " + VERSION)
         directory = os.path.dirname(__file__)
