@@ -21,9 +21,6 @@ class TimerApp:
         self.startTime = None
         self.elapsedTime = timedelta()
         self.total_seconds = 0
-        self.seconds = 0
-        self.minutes = 0
-        self.hours = 0
         #create tk instance
         self.root = tk.Tk()
         #create font
@@ -35,7 +32,7 @@ class TimerApp:
         self.projectLabel = tk.Label(self.root, text='Project: ', font=self.entryFont)
         self.projectVar = tk.StringVar(self.root)
         self.projectEntry = tk.Entry(self.root, textvariable=self.projectVar)
-        self.timeString = tk.StringVar(self.root, value='{:02d}h {:02d}m {:02d}s'.format(self.hours, self.minutes, self.seconds))
+        self.timeString = tk.StringVar(self.root, value=timeString(self.total_seconds))
         self.timeLabel = tk.Label(self.root, textvariable=self.timeString, width=12, anchor='w', font=self.entryFont)
         self.startStopButton = tk.Button(self.root, text="Start", command=self.start)
         self.resetButton = tk.Button(self.root, text="Reset", command=self.reset)
@@ -75,14 +72,12 @@ class TimerApp:
         self.startStopButton.configure(text="Start", command=self.start)
         self.running = False
         self.projectEntry.configure(state=tk.NORMAL)
-        print(len(self.sessionProjectLabels))
         for label in self.sessionProjectLabels:
             label.destroy()
         for label in self.sessionTimeLabels:
             label.destroy()
         del self.sessionProjectLabels[:]
         del self.sessionTimeLabels[:]
-        print(len(self.sessionProjectLabels))
         self.sessionFrame.grid(row=1, column=1, columnspan=2)
     def update(self):
         if self.running:
