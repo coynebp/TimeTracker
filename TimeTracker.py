@@ -5,7 +5,7 @@ import tkinter as tk
 import tkinter.ttk as ttk
 import tkinter.font as tkfont
 
-VERSION = 'v1.0.1'
+VERSION = 'v1.1.0'
 
 class Session:
     def __init__(self, project: str, startTime: datetime, stopTime: datetime):
