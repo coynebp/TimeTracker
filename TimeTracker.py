@@ -38,6 +38,7 @@ class TimerApp:
         self.timeString = tk.StringVar(self.root, value='{:02d}h {:02d}m {:02d}s'.format(self.hours, self.minutes, self.seconds))
         self.timeLabel = tk.Label(self.root, textvariable=self.timeString, width=12, anchor='w', font=self.entryFont)
         self.startStopButton = tk.Button(self.root, text="Start", command=self.start)
+        self.resetButton = tk.Button(self.root, text="Reset", command=self.reset)
         #bind enter key
         self.root.bind('<Return>', self.start)
         #run app
@@ -69,6 +70,20 @@ class TimerApp:
             self.sessionTimeLabels[index].grid(row=index, column=1)
         self.running = False
         self.projectEntry.configure(state=tk.NORMAL)
+    def reset(self):
+        self.root.bind('<Return>', self.start)
+        self.startStopButton.configure(text="Start", command=self.start)
+        self.running = False
+        self.projectEntry.configure(state=tk.NORMAL)
+        print(len(self.sessionProjectLabels))
+        for label in self.sessionProjectLabels:
+            label.destroy()
+        for label in self.sessionTimeLabels:
+            label.destroy()
+        del self.sessionProjectLabels[:]
+        del self.sessionTimeLabels[:]
+        print(len(self.sessionProjectLabels))
+        self.sessionFrame.grid(row=1, column=1, columnspan=2)
     def update(self):
         if self.running:
             self.elapsedTime = datetime.now() - self.startTime
@@ -80,7 +95,7 @@ class TimerApp:
         self.root.after(16, self.update)
     def runApp(self):
         #set window size
-        self.root.geometry("360x400")
+        self.root.geometry("400x400")
         #set title, icon
         self.root.title("TimeTracker " + VERSION)
         directory = os.path.dirname(__file__)
@@ -92,6 +107,7 @@ class TimerApp:
         self.projectEntry.grid(row=0, column=1, pady=4)
         self.timeLabel.grid(row=0, column=2, pady=4)
         self.startStopButton.grid(row=0, column=3, pady=4)
+        self.resetButton.grid(row=0, column=4, pady=4)
         self.sessionFrame.grid(row=1, column=1, columnspan=2)
         #run app
         self.root.mainloop()
