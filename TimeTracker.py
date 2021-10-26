@@ -2,6 +2,7 @@ import os
 from datetime import datetime
 from datetime import timedelta
 import tkinter as tk
+import tkinter.messagebox as tkmessagebox
 import tkinter.ttk as ttk
 import tkinter.font as tkfont
 import math
@@ -77,21 +78,22 @@ class TimerApp:
         self.projectVar.set('')
         self.projectBox.configure(state=tk.NORMAL, values=self.projects)
     def reset(self):
-        self.root.bind('<Return>', self.start)
-        self.startStopButton.configure(text="Start", command=self.start)
-        self.running = False
-        self.projectVar.set('')
-        self.projectBox.configure(state=tk.NORMAL, values=self.projects)
-        self.elapsedSeconds = 0
-        self.recordedSeconds = 0
-        self.totalSeconds = 0
-        for label in self.sessionProjectLabels:
-            label.destroy()
-        for label in self.sessionTimeLabels:
-            label.destroy()
-        del self.sessionProjectLabels[:]
-        del self.sessionTimeLabels[:]
-        self.sessionFrame.grid(row=2, column=1, columnspan=2)
+        if tkmessagebox.askokcancel("Reset", "Reset all timing data?"):
+            self.root.bind('<Return>', self.start)
+            self.startStopButton.configure(text="Start", command=self.start)
+            self.running = False
+            self.projectVar.set('')
+            self.projectBox.configure(state=tk.NORMAL, values=self.projects)
+            self.elapsedSeconds = 0
+            self.recordedSeconds = 0
+            self.totalSeconds = 0
+            for label in self.sessionProjectLabels:
+                label.destroy()
+            for label in self.sessionTimeLabels:
+                label.destroy()
+            del self.sessionProjectLabels[:]
+            del self.sessionTimeLabels[:]
+            self.sessionFrame.grid(row=2, column=1, columnspan=2)
     def update(self):
         if self.running:
             self.elapsedTime = datetime.now() - self.startTime
