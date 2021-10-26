@@ -18,6 +18,7 @@ class Session:
 class TimerApp:
     def __init__(self):
         self.sessions = []
+        self.projects = []
         self.running = False
         self.startTime = None
         self.elapsedTime = timedelta()
@@ -37,7 +38,7 @@ class TimerApp:
         self.totalTime = tk.Label(self.root, textvariable=self.totalTimeVar, width=12, anchor='w', font=self.entryFont)
         self.projectLabel = tk.Label(self.root, text='Project: ', font=self.entryFont)
         self.projectVar = tk.StringVar(self.root)
-        self.projectEntry = tk.Entry(self.root, textvariable=self.projectVar)
+        self.projectBox = ttk.Combobox(self.root, textvariable=self.projectVar, values=self.projects)
         self.timeVar = tk.StringVar(self.root, value=time_string(self.elapsedSeconds))
         self.timeLabel = tk.Label(self.root, textvariable=self.timeVar, width=12, anchor='w', font=self.entryFont)
         self.startStopButton = tk.Button(self.root, text="Start", command=self.start)
@@ -47,7 +48,7 @@ class TimerApp:
     def start(self, event=None):
         self.startStopButton.configure(text="Stop", command=self.stop)
         self.root.bind('<Return>', self.stop)
-        self.projectEntry.configure(state=tk.DISABLED)
+        self.projectBox.configure(state=tk.DISABLED)
         self.startTime = datetime.now()
         self.running = True
         self.update()
@@ -71,12 +72,16 @@ class TimerApp:
             self.sessionTimeLabels[index].grid(row=index, column=1)
         self.running = False
         self.recordedSeconds += math.floor(self.elapsedSeconds)
-        self.projectEntry.configure(state=tk.NORMAL)
+        self.projectVar.set('')
+        if self.projectVar.get() not in self.projects:
+            self.projects.append(self.projectVar.get())
+        self.projectBox.configure(state=tk.NORMAL, values=self.projects)
     def reset(self):
         self.root.bind('<Return>', self.start)
         self.startStopButton.configure(text="Start", command=self.start)
         self.running = False
-        self.projectEntry.configure(state=tk.NORMAL)
+        self.projectVar.set('')
+        self.projectBox.configure(state=tk.NORMAL)
         self.elapsedSeconds = 0
         self.recordedSeconds = 0
         self.totalSeconds = 0
@@ -100,7 +105,7 @@ class TimerApp:
         self.root.after(16, self.update)
     def runApp(self):
         #set window size
-        self.root.geometry("400x400")
+        self.root.geometry("430x400")
         #set title, icon
         self.root.title("TimeTracker " + VERSION)
         directory = os.path.dirname(__file__)
@@ -111,7 +116,7 @@ class TimerApp:
         self.totalTimeLabel.grid(row=0, column=1, pady=4)
         self.totalTime.grid(row=0, column=2, pady=4)
         self.projectLabel.grid(row=1, column=0, pady=4)
-        self.projectEntry.grid(row=1, column=1, pady=4)
+        self.projectBox.grid(row=1, column=1, pady=4)
         self.timeLabel.grid(row=1, column=2, pady=4)
         self.startStopButton.grid(row=1, column=3, pady=4)
         self.resetButton.grid(row=1, column=4, pady=4)
