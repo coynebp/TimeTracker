@@ -6,7 +6,7 @@ import tkinter.ttk as ttk
 import tkinter.font as tkfont
 import math
 
-VERSION = 'v1.2.1'
+VERSION = 'v1.3.0'
 
 class Session:
     def __init__(self, project: str, startTime: datetime, stopTime: datetime):
@@ -33,7 +33,7 @@ class TimerApp:
         self.sessionFrame = tk.Frame(self.root)
         self.sessionProjectLabels = []
         self.sessionTimeLabels = []
-        self.totalTimeLabel = tk.Label(self.root, text='Total Time:', font=self.entryFont)
+        self.totalTimeLabel = tk.Label(self.root, text='Total Time:', width=15, anchor='w', font=self.entryFont)
         self.totalTimeVar = tk.StringVar(self.root, value=time_string(self.totalSeconds))
         self.totalTime = tk.Label(self.root, textvariable=self.totalTimeVar, width=12, anchor='w', font=self.entryFont)
         self.projectLabel = tk.Label(self.root, text='Project: ', font=self.entryFont)
@@ -58,7 +58,7 @@ class TimerApp:
         self.sessions[:0] = [Session(self.projectVar.get(), self.startTime, datetime.now())]
         self.sessionProjectLabels[:0] = [tk.Label(self.sessionFrame, 
                                                  text=self.projectVar.get(), 
-                                                 width=17, 
+                                                 width=22, 
                                                  anchor='w'
                                                  )]
         elapsedSeconds = self.sessions[0].totalTime.total_seconds()
@@ -72,16 +72,16 @@ class TimerApp:
             self.sessionTimeLabels[index].grid(row=index, column=1)
         self.running = False
         self.recordedSeconds += math.floor(self.elapsedSeconds)
-        self.projectVar.set('')
         if self.projectVar.get() not in self.projects:
             self.projects.append(self.projectVar.get())
+        self.projectVar.set('')
         self.projectBox.configure(state=tk.NORMAL, values=self.projects)
     def reset(self):
         self.root.bind('<Return>', self.start)
         self.startStopButton.configure(text="Start", command=self.start)
         self.running = False
         self.projectVar.set('')
-        self.projectBox.configure(state=tk.NORMAL)
+        self.projectBox.configure(state=tk.NORMAL, values=self.projects)
         self.elapsedSeconds = 0
         self.recordedSeconds = 0
         self.totalSeconds = 0
