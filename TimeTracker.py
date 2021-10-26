@@ -6,7 +6,7 @@ import tkinter.ttk as ttk
 import tkinter.font as tkfont
 import math
 
-VERSION = 'v1.2.0'
+VERSION = 'v1.2.1'
 
 class Session:
     def __init__(self, project: str, startTime: datetime, stopTime: datetime):
@@ -21,9 +21,9 @@ class TimerApp:
         self.running = False
         self.startTime = None
         self.elapsedTime = timedelta()
-        self.elapsed_seconds = 0
-        self.recorded_seconds = 0
-        self.total_seconds = 0
+        self.elapsedSeconds = 0
+        self.recordedSeconds = 0
+        self.totalSeconds = 0
         #create tk instance
         self.root = tk.Tk()
         #create font
@@ -33,17 +33,15 @@ class TimerApp:
         self.sessionProjectLabels = []
         self.sessionTimeLabels = []
         self.totalTimeLabel = tk.Label(self.root, text='Total Time:', font=self.entryFont)
-        self.totalTimeVar = tk.StringVar(self.root, value=timeString(self.total_seconds))
+        self.totalTimeVar = tk.StringVar(self.root, value=time_string(self.totalSeconds))
         self.totalTime = tk.Label(self.root, textvariable=self.totalTimeVar, width=12, anchor='w', font=self.entryFont)
         self.projectLabel = tk.Label(self.root, text='Project: ', font=self.entryFont)
         self.projectVar = tk.StringVar(self.root)
         self.projectEntry = tk.Entry(self.root, textvariable=self.projectVar)
-        self.timeVar = tk.StringVar(self.root, value=timeString(self.elapsed_seconds))
+        self.timeVar = tk.StringVar(self.root, value=time_string(self.elapsedSeconds))
         self.timeLabel = tk.Label(self.root, textvariable=self.timeVar, width=12, anchor='w', font=self.entryFont)
         self.startStopButton = tk.Button(self.root, text="Start", command=self.start)
         self.resetButton = tk.Button(self.root, text="Reset", command=self.reset)
-        #bind enter key
-        self.root.bind('<Return>', self.start)
         #run app
         self.runApp()
     def start(self, event=None):
@@ -62,9 +60,9 @@ class TimerApp:
                                                  width=17, 
                                                  anchor='w'
                                                  )]
-        elapsed_seconds = self.sessions[0].totalTime.total_seconds()
+        elapsedSeconds = self.sessions[0].totalTime.total_seconds()
         self.sessionTimeLabels[:0] = [tk.Label(self.sessionFrame, 
-                                              text=timeString(elapsed_seconds), 
+                                              text=time_string(elapsedSeconds), 
                                               width=17, 
                                               anchor='w'
                                               )]
@@ -72,16 +70,16 @@ class TimerApp:
             self.sessionProjectLabels[index].grid(row=index, column=0)
             self.sessionTimeLabels[index].grid(row=index, column=1)
         self.running = False
-        self.recorded_seconds += math.floor(self.elapsed_seconds)
+        self.recordedSeconds += math.floor(self.elapsedSeconds)
         self.projectEntry.configure(state=tk.NORMAL)
     def reset(self):
         self.root.bind('<Return>', self.start)
         self.startStopButton.configure(text="Start", command=self.start)
         self.running = False
         self.projectEntry.configure(state=tk.NORMAL)
-        self.elapsed_seconds = 0
-        self.recorded_seconds = 0
-        self.total_seconds = 0
+        self.elapsedSeconds = 0
+        self.recordedSeconds = 0
+        self.totalSeconds = 0
         for label in self.sessionProjectLabels:
             label.destroy()
         for label in self.sessionTimeLabels:
@@ -94,10 +92,10 @@ class TimerApp:
             self.elapsedTime = datetime.now() - self.startTime
         else:
             self.elapsedTime = timedelta()
-        self.elapsed_seconds = self.elapsedTime.total_seconds()
-        self.timeVar.set(timeString(self.elapsed_seconds))
-        self.total_seconds = self.recorded_seconds + self.elapsed_seconds
-        self.totalTimeVar.set(timeString(self.total_seconds))
+        self.elapsedSeconds = self.elapsedTime.total_seconds()
+        self.timeVar.set(time_string(self.elapsedSeconds))
+        self.totalSeconds = self.recordedSeconds + self.elapsedSeconds
+        self.totalTimeVar.set(time_string(self.totalSeconds))
         #schedule the update function
         self.root.after(16, self.update)
     def runApp(self):
@@ -118,17 +116,21 @@ class TimerApp:
         self.startStopButton.grid(row=1, column=3, pady=4)
         self.resetButton.grid(row=1, column=4, pady=4)
         self.sessionFrame.grid(row=2, column=1, columnspan=2)
-        
+        #bind enter key
+        self.root.bind('<Return>', self.start)
         #run app
         self.root.mainloop()
+
+def time_string(totalSeconds: int) -> str:
+    seconds = int(totalSeconds % 60)
+    minutes = int((totalSeconds // 60) % 60)
+    hours = int(totalSeconds // 3600)
+    return "{:02d}h {:02d}m {:02d}s".format(hours, minutes, seconds)
+
+
 def main():
     TimerApp()
 
-def timeString(total_seconds: int) -> str:
-    seconds = int(total_seconds % 60)
-    minutes = int((total_seconds // 60) % 60)
-    hours = int(total_seconds // 3600)
-    return "{:02d}h {:02d}m {:02d}s".format(hours, minutes, seconds)
 
 if __name__ == "__main__":
     main()
