@@ -17,7 +17,7 @@ import tkinter.font as tkfont
 import math
 from dataclasses import dataclass
 
-VERSION = "v1.3.2"
+VERSION = "v1.4.0"
 
 # pylint: disable=too-many-instance-attributes
 # GUIs often contain many attributes
@@ -109,26 +109,34 @@ class TimerApp:
         self.sessions[:0] = [
             Session(self.project_var.get(), self.start_time, datetime.now())
         ]
-        self.session_project_labels[:0] = [
-            tk.Label(
-                self.session_frame, text=self.project_var.get(), width=22, anchor="w"
-            )
-        ]
         elapsed_seconds = self.sessions[0].total_time().total_seconds()
-        self.session_time_labels[:0] = [
-            tk.Label(
-                self.session_frame,
-                text=time_string(elapsed_seconds),
-                width=17,
-                anchor="w",
-            )
-        ]
+        self.recorded_seconds += math.floor(self.elapsed_seconds)
+        if self.sessions[0].project in self.projects:
+            for session in self.sessions[1:]:
+                if session.project == self.sessions[0].project:
+                    elapsed_seconds += math.floor(session.total_time().total_seconds())
+            for (index, label) in enumerate(self.session_time_labels):
+                if self.session_project_labels[index]['text'] == self.sessions[0].project:
+                    self.session_time_labels[index].configure(text=time_string(elapsed_seconds))
+        else:
+            self.session_project_labels[:0] = [
+                tk.Label(
+                    self.session_frame, text=self.project_var.get(), width=22, anchor="w"
+                )
+            ]
+            self.session_time_labels[:0] = [
+                tk.Label(
+                    self.session_frame,
+                    text=time_string(elapsed_seconds),
+                    width=17,
+                    anchor="w",
+                )
+            ]
         for (index, label) in enumerate(self.session_project_labels):
             label.grid(row=index, column=0)
         for (index, label) in enumerate(self.session_time_labels):
             label.grid(row=index, column=1)
         self.running = False
-        self.recorded_seconds += math.floor(self.elapsed_seconds)
         if self.project_var.get() not in self.projects:
             self.projects.append(self.project_var.get())
         self.project_var.set("")
