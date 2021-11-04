@@ -46,6 +46,7 @@ class TimerApp:
     def __init__(self):
         self.sessions = []
         self.projects = []
+        self.project_options =[]
         self.running = False
         self.start_time = None
         self.elapsed_time = timedelta()
@@ -76,7 +77,7 @@ class TimerApp:
         self.project_label = tk.Label(self.root, text="Project: ", font=self.entry_font)
         self.project_var = tk.StringVar(self.root)
         self.project_box = ttk.Combobox(
-            self.root, textvariable=self.project_var, values=self.projects
+            self.root, textvariable=self.project_var, values=self.project_options
         )
         self.time_var = tk.StringVar(self.root, value=time_string(self.elapsed_seconds))
         self.time_label = tk.Label(
@@ -139,8 +140,10 @@ class TimerApp:
         self.running = False
         if self.project_var.get() not in self.projects:
             self.projects.append(self.project_var.get())
+        if self.project_var.get() not in self.project_options:
+            self.project_options.append(self.project_var.get())
         self.project_var.set("")
-        self.project_box.configure(state=tk.NORMAL, values=self.projects)
+        self.project_box.configure(state=tk.NORMAL, values=self.project_options)
 
     def reset(self):
         """Prompts user for confirmation, then resets the GUI"""
@@ -153,6 +156,7 @@ class TimerApp:
             self.elapsed_seconds = 0
             self.recorded_seconds = 0
             self.total_seconds = 0
+            self.projects = []
             for label in self.session_project_labels:
                 label.destroy()
             for label in self.session_time_labels:
