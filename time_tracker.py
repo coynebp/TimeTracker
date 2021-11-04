@@ -17,7 +17,7 @@ import tkinter.font as tkfont
 import math
 from dataclasses import dataclass
 
-VERSION = "v1.4.0"
+VERSION = "v1.4.1"
 
 # pylint: disable=too-many-instance-attributes
 # GUIs often contain many attributes
